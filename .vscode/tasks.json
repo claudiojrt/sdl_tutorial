@@ -10,7 +10,9 @@
             "args": [
                 "-g",
                 "${file}",
+                "code/texture.cpp",
                 "-IC:\\SDL\\include\\SDL2",
+                "-I${workspaceFolder}\\code",
                 "-LC:\\SDL\\lib",
                 "-w",
                 "-Wl,-subsystem,windows",

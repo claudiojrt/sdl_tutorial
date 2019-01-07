@@ -1,49 +1,70 @@
-#include <SDL.h>
-#include <SDL_image.h>
 #include <iostream>
 #include <string>
+#include <SDL.h>
+#include <SDL_image.h>
+#include <texture.h>
 
-SDL_Texture* loadTexture(std::string path);
+//Function definitions
+void Init();
+void Quit();
+
+//Global references and buffers
+const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 600;
 
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
-SDL_Texture* gTexture = NULL;
+
+SDL_Event e;
+bool quit = false;
 
 int main(int argc, char *argv[])
 {
+    Init();
 
-    SDL_Init(SDL_INIT_VIDEO);
-
-    gWindow = SDL_CreateWindow("Textures", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
-    gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
-    SDL_SetRenderDrawColor(gRenderer, 255, 0, 100, 255);
-
-    IMG_Init(IMG_INIT_PNG);
-
-    bool quit = false;
-    SDL_Event e;
-
-    gTexture = loadTexture("texture.png");
+    Texture texture;
+    texture.loadFromFile(gRenderer, "res/Clob.png");
 
     while(!quit)
     {
-        while( SDL_PollEvent( &e ) != 0 )
+        while(SDL_PollEvent(&e) != 0)
         {
-            //User requests quit
-            if( e.type == SDL_QUIT )
+            if(e.type == SDL_QUIT)
             {
                 quit = true;
             }
         }
 
+        //Clear the back buffer
         SDL_RenderClear(gRenderer);
-        SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
+        SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+
+        //Render everything
+        texture.render(gRenderer, 400, 300);
+
+        //Bring back buffer to front
         SDL_RenderPresent(gRenderer);
-
     }
+    
+    Quit();
+    return 0;
+}
 
-    SDL_DestroyTexture(gTexture);
-    gTexture = NULL;
+//Init SDL systems
+void Init()
+{
+    SDL_Init(SDL_INIT_VIDEO);
+
+    gWindow = SDL_CreateWindow("Texture Class", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+    gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+
+    IMG_Init(IMG_INIT_PNG);
+}
+
+//Quit SDL systems and free resources
+void Quit()
+{
+    //Destroy textures
 
     SDL_DestroyRenderer(gRenderer);
     gRenderer = NULL;
@@ -53,14 +74,4 @@ int main(int argc, char *argv[])
 
     IMG_Quit();
     SDL_Quit();
-    return 0;
-}
-
-SDL_Texture* loadTexture(std::string path) {
-
-    SDL_Surface* image = IMG_Load(path.c_str());
-    SDL_SetColorKey(image, SDL_TRUE, SDL_MapRGB(image->format, 255, 255, 255));
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(gRenderer, image);
-
-    return  texture;
 }
