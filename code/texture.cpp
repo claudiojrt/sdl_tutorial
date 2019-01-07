@@ -12,6 +12,9 @@ Texture::Texture()
 	mHeight = 0;
 	mCounter = 0;
 	mAnimationSpeedVSync = 0;
+	mAngle = 0;
+	mCenter = NULL;
+	mFlipMode = SDL_FLIP_NONE;
 }
 
 Texture::~Texture()
@@ -69,6 +72,10 @@ void Texture::free()
 		mHeight = 0;
 		mFrames = 0;
 		mCounter = 0;
+		mAnimationSpeedVSync = 0;
+		mAngle = 0;
+		mCenter = NULL;
+		mFlipMode = SDL_FLIP_NONE;
 	}
 }
 
@@ -77,7 +84,13 @@ void Texture::render(SDL_Renderer* renderer, int x, int y, int frame)
 	//Set rendering space and render to screen
 	SDL_Rect space = {x, y, mWidth/mFrames, mHeight};
 	SDL_Rect clip = mSpriteClips[frame];
-	SDL_RenderCopy(renderer, mTexture, &mSpriteClips[frame], &space);
+	//SDL_RenderCopy(renderer, mTexture, &mSpriteClips[frame], &space);
+	SDL_RenderCopyEx(renderer, mTexture, &mSpriteClips[frame], &space, mAngle, mCenter, mFlipMode);
+}
+
+void Texture::setColor(Uint8 red, Uint8 green, Uint8 blue)
+{
+	SDL_SetTextureColorMod(mTexture, red, green, blue);
 }
 
 int Texture::getWidth()
@@ -100,7 +113,32 @@ int Texture::getAnimationSpeed()
 	return mAnimationSpeedVSync;
 }
 
-void Texture::setColor(Uint8 red, Uint8 green, Uint8 blue)
+double Texture::getRotationAngle()
 {
-	SDL_SetTextureColorMod(mTexture, red, green, blue);
+	return mAngle;
+}
+
+SDL_Point* Texture::getCenter()
+{
+	return mCenter;
+}
+
+SDL_RendererFlip Texture::getFlipMode()
+{
+	return mFlipMode;
+}
+
+void Texture::setRotationAngle(double angle)
+{
+	mAngle = angle;
+}
+
+void Texture::setCenter(SDL_Point* center)
+{
+	mCenter = center;
+}
+
+void Texture::setFlipMode(SDL_RendererFlip mode)
+{
+	mFlipMode = mode;
 }

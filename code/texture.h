@@ -25,11 +25,17 @@ class Texture
 		//Set color modulation
         void setColor(Uint8 red, Uint8 green, Uint8 blue);
 
-		//Gets image dimensions
 		int getWidth();
 		int getHeight();
 		int getFrames();
 		int getAnimationSpeed();
+		double getRotationAngle();
+		SDL_Point* getCenter();
+		SDL_RendererFlip getFlipMode();
+
+		void setRotationAngle(double angle);
+		void setCenter(SDL_Point* center);
+		void setFlipMode(SDL_RendererFlip mode);
 
 		//Counter for the animations, public because yes
 		int mCounter;
@@ -47,4 +53,7 @@ class Texture
 		int mHeight;
 		int mFrames;
 		int mAnimationSpeedVSync;
+		double mAngle;
+		SDL_Point* mCenter;
+		SDL_RendererFlip mFlipMode;
 };
