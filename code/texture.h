@@ -14,7 +14,7 @@ class Texture
 		~Texture();
 
 		//Loads image at specified path
-		bool loadFromFile(SDL_Renderer* renderer, std::string path, int frames);
+		bool loadFromFile(SDL_Renderer* renderer, std::string path, int frames, int animationSpeedVSync);
 
 		//Deallocates texture
 		void free();
@@ -22,10 +22,16 @@ class Texture
 		//Renders texture at given point
 		void render(SDL_Renderer* renderer, int x, int y, int frame);
 
+		//Set color modulation
+        void setColor(Uint8 red, Uint8 green, Uint8 blue);
+
 		//Gets image dimensions
 		int getWidth();
 		int getHeight();
+		int getFrames();
+		int getAnimationSpeed();
 
+		//Counter for the animations, public because yes
 		int mCounter;
 
 	private:
@@ -40,4 +46,5 @@ class Texture
 		int mWidth;
 		int mHeight;
 		int mFrames;
+		int mAnimationSpeedVSync;
 };

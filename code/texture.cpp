@@ -11,6 +11,7 @@ Texture::Texture()
 	mWidth = 0;
 	mHeight = 0;
 	mCounter = 0;
+	mAnimationSpeedVSync = 0;
 }
 
 Texture::~Texture()
@@ -18,7 +19,7 @@ Texture::~Texture()
 	free();
 }
 
-bool Texture::loadFromFile(SDL_Renderer* renderer, std::string path, int frames)
+bool Texture::loadFromFile(SDL_Renderer* renderer, std::string path, int frames, int animationSpeedVSync)
 {
 	//Get rid of preexisting texture
 	free();
@@ -43,6 +44,9 @@ bool Texture::loadFromFile(SDL_Renderer* renderer, std::string path, int frames)
     SDL_FreeSurface(loadedSurface);
 
 	mFrames = frames;
+	mAnimationSpeedVSync = animationSpeedVSync;
+
+
 	int fW = mWidth / mFrames;
 	for(int i = 1; i <= mFrames; i++) 
 	{
@@ -84,4 +88,19 @@ int Texture::getWidth()
 int Texture::getHeight()
 {
 	return mHeight;
+}
+
+int Texture::getFrames()
+{
+	return mFrames;
+}
+
+int Texture::getAnimationSpeed()
+{
+	return mAnimationSpeedVSync;
+}
+
+void Texture::setColor(Uint8 red, Uint8 green, Uint8 blue)
+{
+	SDL_SetTextureColorMod(mTexture, red, green, blue);
 }

@@ -18,14 +18,18 @@ SDL_Renderer* gRenderer = NULL;
 SDL_Event e;
 bool quit = false;
 
+Uint8 r = 255;
+Uint8 g = 255;
+Uint8 b = 255;
+
 int main(int argc, char *argv[])
 {
     Init();
 
     Texture clob;
     Texture stonebrick;
-    clob.loadFromFile(gRenderer, "res/Clob_spritesheet.png", 4);
-    stonebrick.loadFromFile(gRenderer, "res/stone_brick.png", 1);
+    clob.loadFromFile(gRenderer, "res/Clob_spritesheet.png", 4, 10);
+    stonebrick.loadFromFile(gRenderer, "res/stone_brick.png", 1, 0);
 
     while(!quit)
     {
@@ -35,6 +39,36 @@ int main(int argc, char *argv[])
             {
                 quit = true;
             }
+            //On keypress change rgb values
+            else if(e.type == SDL_KEYDOWN)
+            {
+                switch(e.key.keysym.sym)
+                {
+                    case SDLK_q:
+                        r += 32;
+                        break;
+                    
+                    case SDLK_w:
+                        g += 32;
+                        break;
+                    
+                    case SDLK_e:
+                        b += 32;
+                        break;
+                    
+                    case SDLK_a:
+                        r -= 32;
+                        break;
+                    
+                    case SDLK_s:
+                        g -= 32;
+                        break;
+                    
+                    case SDLK_d:
+                        b -= 32;
+                        break;
+                }
+            }
         }
 
         //Clear the back buffer
@@ -42,21 +76,15 @@ int main(int argc, char *argv[])
         SDL_SetRenderDrawColor(gRenderer, 0, 0, 255, 255);
 
         //Render everything
-        clob.render(gRenderer, 350, 408, clob.mCounter);
+        clob.setColor(r,g,b);
+        clob.render(gRenderer, 350, 408, clob.mCounter / clob.getAnimationSpeed());
         for (int i = 1; i < 8; i++) {
             stonebrick.render(gRenderer, i * stonebrick.getWidth() - stonebrick.getWidth(), SCREEN_HEIGHT - stonebrick.getHeight(), 0);
         }
 
         clob.mCounter++;
-        if(clob.mCounter == 4)
+        if(clob.mCounter / clob.getAnimationSpeed() >= clob.getFrames())
             clob.mCounter = 0;
-
-        if(clob.mCounter % 2 == 0){
-            SDL_Delay(300);
-        }
-        else{
-            SDL_Delay(100);
-        }
 
         //Bring back buffer to front
         SDL_RenderPresent(gRenderer);
@@ -72,7 +100,7 @@ void Init()
     SDL_Init(SDL_INIT_VIDEO);
 
     gWindow = SDL_CreateWindow("Texture Class", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
-    gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+    gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 
     IMG_Init(IMG_INIT_PNG);
 }
