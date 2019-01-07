@@ -40,6 +40,12 @@ class Texture
 		//Counter for the animations, public because yes
 		int mCounter;
 
+		//Movement information
+		int mXVel;
+		int mYVel;
+		int mXDir;
+		int mYDir;
+
 	private:
 
 		//The actual hardware texture

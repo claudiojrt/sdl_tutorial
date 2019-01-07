@@ -84,7 +84,6 @@ void Texture::render(SDL_Renderer* renderer, int x, int y, int frame)
 	//Set rendering space and render to screen
 	SDL_Rect space = {x, y, mWidth/mFrames, mHeight};
 	SDL_Rect clip = mSpriteClips[frame];
-	//SDL_RenderCopy(renderer, mTexture, &mSpriteClips[frame], &space);
 	SDL_RenderCopyEx(renderer, mTexture, &mSpriteClips[frame], &space, mAngle, mCenter, mFlipMode);
 }
 
