@@ -1,4 +1,5 @@
 #include "player.h"
+#include "global.h"
 #include <cmath>
 
 Player::Player()
@@ -23,14 +24,14 @@ void Player::handleEvent(SDL_Event& event)
             // X axis
             if(event.jaxis.axis == 0)
             {
-                if(event.jaxis.value < -14000)
+                if(event.jaxis.value < -JOYSTICK_DEAD_ZONE)
                 {
                     sprite.setFlipMode(SDL_FLIP_HORIZONTAL);
                     jump.setFlipMode(SDL_FLIP_HORIZONTAL);
                     mDirX = -1;
                     mVelX = -mAcelX;
                 }
-                else if(event.jaxis.value > 14000)
+                else if(event.jaxis.value > JOYSTICK_DEAD_ZONE)
                 {
                     sprite.setFlipMode(SDL_FLIP_NONE);
                     jump.setFlipMode(SDL_FLIP_NONE);
@@ -43,19 +44,6 @@ void Player::handleEvent(SDL_Event& event)
                     mVelX = 0;
                 }   
             }
-
-            /* // Y axis
-            else if(e.jaxis.axis == 1)
-            {
-                if(e.jaxis.value < -14000)
-                    mDirY = -1;
-                else if(e.jaxis.value > 14000)
-                    mDirY = 1;
-                else
-                    mDirY = 0;
-            } */
-        /* if(mDirX != 0 || mDirY != 0)
-            sprite.setRotationAngle(atan2((double)mDirY, (double)mDirX) * (180.0 / M_PI)); */
         }
     }
     if(event.type == SDL_JOYBUTTONDOWN)
@@ -85,7 +73,7 @@ void Player::move(std::vector<SDL_Rect> objects)
             continue;
         }
     }
-    if(mPosX < 0 || (mPosX + sprite.getWidth() > 2000))
+    if(mPosX < 0 || (mPosX + sprite.getWidth() > LEVEL_WIDTH))
     {
         mPosX -= mVelX;
     }
@@ -100,15 +88,15 @@ void Player::move(std::vector<SDL_Rect> objects)
             mVelY = 0;
         }
     }
-    if(mPosY >= 1000 - sprite.getHeight())
+    if(mPosY >= LEVEL_HEIGHT - sprite.getHeight())
     {
-        mPosY = 1000 - sprite.getHeight();
+        mPosY = LEVEL_HEIGHT - sprite.getHeight();
         mVelY = 0;
     }
 
     //Gravity
     //ALWAYS REMEMBER: WHEN COLLIDING IN Y AXIS, MUST CLEAN THE Y VELOCITY
-    mVelY += 1;
+    mVelY += FALL_VELOCITY;
     if(mVelY > 20)
         mVelY = 20;
 }
@@ -131,11 +119,11 @@ void Player::render(SDL_Renderer* renderer, SDL_Rect camera)
         if(jump.mCounter + 1 == jump.getAnimationSpeed() * jump.getFrames())
             mJumping = false;
 
-        jump.render(renderer, mPosX, mPosY, jump.mCounter / jump.getAnimationSpeed(), camera);
+        jump.render(renderer, mPosX, mPosY, jump.mCounter / jump.getAnimationSpeed(), camera, 1);
     }
     else
     {
-        sprite.render(renderer, mPosX, mPosY, sprite.mCounter / sprite.getAnimationSpeed(), camera);
+        sprite.render(renderer, mPosX, mPosY, sprite.mCounter / sprite.getAnimationSpeed(), camera, 1);
     }
 }
 

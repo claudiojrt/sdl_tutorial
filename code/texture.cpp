@@ -75,6 +75,7 @@ void Texture::free()
 		mFrames = 0;
 		mCounter = 0;
 		mAnimationSpeedVSync = 0;
+		mSpriteClips.clear();
 		mAngle = 0;
 		mCenter = NULL;
 		mFlipMode = SDL_FLIP_NONE;
@@ -82,14 +83,15 @@ void Texture::free()
 	}
 }
 
-void Texture::render(SDL_Renderer* renderer, int x, int y, int frame, SDL_Rect camera)
+void Texture::render(SDL_Renderer* renderer, int x, int y, int frame, SDL_Rect camera, double scale)
 {
 	//Set rendering space and render to screen
-	SDL_Rect space = {x - camera.x, y - camera.y, mWidth, mHeight};
+	SDL_Rect space = {x - camera.x, y - camera.y, scale*mWidth, scale*mHeight};
 	SDL_Rect clip = mSpriteClips[frame];
+	//Renderer, the texture itself, the portion of the image to render, the position on the screen, angle/center/flip.
 	SDL_RenderCopyEx(renderer, mTexture, &mSpriteClips[frame], &space, mAngle, mCenter, mFlipMode);
 
-	//Go to the next frame
+	//Each time it renders, it calculates via animation speed what frame will be the next
 	if(mAnimationSpeedVSync != 0)
 	{
 		mCounter++;

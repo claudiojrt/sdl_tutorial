@@ -60,5 +60,6 @@
         "typeindex": "cpp",
         "utility": "cpp",
         "valarray": "cpp"
-    }
+    },
+    "editor.fontFamily": "Hack"
 }
