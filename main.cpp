@@ -39,26 +39,20 @@ int main(int argc, char *argv[])
             {
                 quit = true;
             }
-            //On keypress change rgb values
-            else if(e.type == SDL_KEYDOWN)
-            {
-                switch(e.key.keysym.sym)
-                {
-                    case SDLK_a:
-                        clob.setFlipMode(SDL_FLIP_HORIZONTAL);
-                        break;
-                    case SDLK_d:
-                        clob.setFlipMode(SDL_FLIP_NONE);
-                        break;
-                    case SDLK_q:
-                        clob.setRotationAngle(clob.getRotationAngle() - 30);
-                        break;
-                    case SDLK_e:
-                        clob.setRotationAngle(clob.getRotationAngle() + 30);
-                        break;
-                }
-            }
         }
+
+        const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
+        if(currentKeyStates[SDL_SCANCODE_A])
+            clob.setFlipMode(SDL_FLIP_HORIZONTAL);
+
+        if(currentKeyStates[SDL_SCANCODE_D])
+            clob.setFlipMode(SDL_FLIP_NONE);
+
+        if(currentKeyStates[SDL_SCANCODE_Q])
+           clob.setRotationAngle(clob.getRotationAngle() - 30);
+
+        if(currentKeyStates[SDL_SCANCODE_E])
+            clob.setRotationAngle(clob.getRotationAngle() + 30);
 
         //Clear the back buffer
         SDL_RenderClear(gRenderer);
