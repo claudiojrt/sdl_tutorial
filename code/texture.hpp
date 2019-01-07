@@ -1,9 +1,11 @@
 #pragma once
 
-#include <string>
 #include <SDL.h>
+#include <SDL_image.h>
+#include "timer.hpp"
+#include <iostream>
+#include <string>
 #include <vector>
-#include "timer.h"
 
 class Texture
 {
@@ -15,48 +17,37 @@ class Texture
 		~Texture();
 
 		//Loads image at specified path
-		bool loadFromFile(SDL_Renderer* renderer, std::string path, int frames, int animationSpeedVSync);
+		bool loadFromFile(SDL_Renderer* renderer, std::string path);
 
 		//Deallocates texture
 		void free();
 
 		//Renders texture at given point
-		void render(SDL_Renderer* renderer, int x, int y, int frame, SDL_Rect camera, double scale);
+		void render(int x, int y, SDL_Rect clip, SDL_Rect camera, double scale);
 
 		//Set color modulation
         void setColor(Uint8 red, Uint8 green, Uint8 blue);
 
-		//Getters
+		//Get size
 		int getWidth();
 		int getHeight();
-		int getFrames();
-		int getAnimationSpeed();
-		double getRotationAngle();
-		SDL_Point* getCenter();
-		SDL_RendererFlip getFlipMode();
 
 		//Setters
 		void setRotationAngle(double angle);
 		void setCenter(SDL_Point* center);
 		void setFlipMode(SDL_RendererFlip mode);
 
-		//Frame rendering counter, for the animations. Time of a sprite being rendered = counter(frames) / animation speed
-		int mCounter;
-
-		Timer mTimer;
-
 	private:
+		//Renderer
+		SDL_Renderer* mRenderer;
+
 		//The actual hardware texture
 		SDL_Texture* mTexture;
-
-		//The size/position of the single frames on the sprite sheet
-		std::vector<SDL_Rect> mSpriteClips;
 
 		//Image dimensions
 		int mWidth;
 		int mHeight;
-		int mFrames;
-		int mAnimationSpeedVSync;
+
 		double mAngle;
 		SDL_Point* mCenter;
 		SDL_RendererFlip mFlipMode;

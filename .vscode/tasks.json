@@ -9,10 +9,15 @@
             "command": "g++",
             "args": [
                 "-g",
-                "${file}",
-                "code/texture.cpp",
-                "code/timer.cpp",
-                "code/player.cpp",
+                "main.cpp",
+                "code\\helper.cpp",
+                "code\\texture.cpp",
+                "code\\timer.cpp",
+                "code\\player.cpp",
+                "code\\tileset.cpp",
+                "code\\animation.cpp",
+                "code\\level.cpp",
+                "code\\tile.cpp",
                 "-IC:\\SDL\\include\\SDL2",
                 "-I${workspaceFolder}\\code",
                 "-LC:\\SDL\\lib",
@@ -24,7 +29,7 @@
                 "-lSDL2_image",
                 "-lSDL2_ttf",
                 "-o",
-                "${fileBasenameNoExtension}.exe"
+                "main.exe"
             ],
             "group": {
                 "kind": "build",

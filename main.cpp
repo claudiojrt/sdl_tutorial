@@ -1,29 +1,21 @@
-#include "code/global.h"
-#include <iostream>
-#include <string>
 #include <SDL.h>
 #include <SDL_image.h>
-#include <texture.h>
-#include <player.h>
+#include <helper.hpp>
+#include <player.hpp>
+#include <level.hpp>
 
 //Function definitions
 void Init();
 void Quit();
 void CameraMove();
 
-//Global.h definitionss
-extern int LEVEL_WIDTH = 2000;
-extern int LEVEL_HEIGHT = 600;
-extern const int SCREEN_WIDTH = 800;
-extern const int SCREEN_HEIGHT = 600;
-extern const int FALL_VELOCITY = 1;
-extern const int JOYSTICK_DEAD_ZONE = 14000;
-
 //Global objects
 SDL_Window* gWindow = NULL;
 SDL_Renderer* gRenderer = NULL;
 SDL_Joystick* gJoystick = NULL;
 SDL_Rect gCamera = {0,0, SCREEN_WIDTH, SCREEN_HEIGHT};
+
+//Player
 Player player1;
 
 //Global flags and control variables
@@ -35,17 +27,14 @@ int main(int argc, char *argv[])
 {
     Init();
 
-    Texture background;
-        background.loadFromFile(gRenderer, "res/background.png", 1, 0);
-    Texture ground;
-        ground.loadFromFile(gRenderer, "res/ground-tile.png", 1, 0);
-
-    gObjects.push_back({0, 535, 2000, 100});
-
     player1.setPos(350, 100);
-    player1.sprite.loadFromFile(gRenderer, "res/Clob_spritesheet.png", 4, 10);
-    player1.sprite.mTimer.start();
-    player1.jump.loadFromFile(gRenderer, "res/Clob_jump.png", 4, 4);
+    player1.idle.loadFromFile(gRenderer, "res/Clob_spritesheet.png", 4, 10);
+    player1.idle.mTimer.start();
+    player1.jump.loadFromFile(gRenderer, "res/Clob_jump.png", 4, 5);
+
+    Level level1(1);
+    level1.loadTileset(gRenderer, "res/spritesheet.png", 5, 1);
+    gObjects = level1.getColliders();
 
     while(!gQuit)
     {
@@ -59,30 +48,38 @@ int main(int argc, char *argv[])
             player1.handleEvent(gEvent);
         }
 
+        if(gJoystick == NULL)
+        {
+            const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
+            if(currentKeyStates[SDL_SCANCODE_A])
+                player1.moveLeft();
+            if(currentKeyStates[SDL_SCANCODE_D])
+                player1.moveRight();
+            if(!currentKeyStates[SDL_SCANCODE_A] && !currentKeyStates[SDL_SCANCODE_D])
+                player1.stopMove();
+        }
+        
+
         //Clear the back buffer
         SDL_RenderClear(gRenderer);
         SDL_SetRenderDrawColor(gRenderer, 80, 80, 80, 255);
 
-        //Fetch the new positions
+        //Fetch the new position
         player1.move(gObjects);
 
         //Adjust the camera
         CameraMove();
 
         //Render everything
-        for(int i = 0; i < 3; i++)
-            background.render(gRenderer, 960 * i, 0, 0, gCamera, 2.5);
-    
-        for(int i = 0; i < 7; i++)
-            ground.render(gRenderer, 320 * i, 465, 0, gCamera, 2.5);
-
-        player1.render(gRenderer, gCamera);
+        level1.Render(gCamera);
+        player1.render(gCamera);
 
         //Bring back buffer to front
         SDL_RenderPresent(gRenderer);
     }
     
     Quit();
+    //system("pause");
     return 0;
 }
 
@@ -106,8 +103,6 @@ void Init()
 //Quit SDL systems and free resources
 void Quit()
 {
-    //Destroy textures
-
     SDL_DestroyRenderer(gRenderer);
     gRenderer = NULL;
 
@@ -123,8 +118,8 @@ void Quit()
 
 void CameraMove()
 {
-    gCamera.x = (player1.getPosX() + player1.sprite.getWidth() / 2) - SCREEN_WIDTH/2;
-    gCamera.y = (player1.getPosY() + player1.sprite.getHeight() / 2) - SCREEN_HEIGHT/2;
+    gCamera.x = (player1.getPosX() + player1.idle.getWidth() / 2) - SCREEN_WIDTH/2;
+    gCamera.y = (player1.getPosY() + player1.idle.getHeight() / 2) - SCREEN_HEIGHT/2;
 
     if(gCamera.x < 0)
         gCamera.x = 0;

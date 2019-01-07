@@ -1,6 +1,4 @@
-#include "player.h"
-#include "global.h"
-#include <cmath>
+#include "player.hpp"
 
 Player::Player()
 {
@@ -10,9 +8,10 @@ Player::Player()
     mPosY = 0;
 	mVelX = 0;
     mVelY = 0;
-    mAcelX = 7;
-    mAcelY = -15;
+    mAcelX = 12;
+    mAcelY = -20;
     mJumping = false;
+    mFalling = false;
 }
 
 void Player::handleEvent(SDL_Event& event)
@@ -26,22 +25,15 @@ void Player::handleEvent(SDL_Event& event)
             {
                 if(event.jaxis.value < -JOYSTICK_DEAD_ZONE)
                 {
-                    sprite.setFlipMode(SDL_FLIP_HORIZONTAL);
-                    jump.setFlipMode(SDL_FLIP_HORIZONTAL);
-                    mDirX = -1;
-                    mVelX = -mAcelX;
+                    moveLeft();
                 }
                 else if(event.jaxis.value > JOYSTICK_DEAD_ZONE)
                 {
-                    sprite.setFlipMode(SDL_FLIP_NONE);
-                    jump.setFlipMode(SDL_FLIP_NONE);
-                    mDirX = 1;
-                    mVelX = mAcelX;
+                    moveRight();
                 }
                 else
                 {
-                    mDirX = 0;
-                    mVelX = 0;
+                    stopMove();
                 }   
             }
         }
@@ -59,6 +51,15 @@ void Player::handleEvent(SDL_Event& event)
                 }
         }
     }
+    else if(event.type == SDL_KEYDOWN)
+    {
+        switch(event.key.keysym.sym)
+        {
+            case SDLK_SPACE:
+                startJump();
+                break;
+        }
+    }
 }
 
 void Player::move(std::vector<SDL_Rect> objects)
@@ -73,10 +74,6 @@ void Player::move(std::vector<SDL_Rect> objects)
             continue;
         }
     }
-    if(mPosX < 0 || (mPosX + sprite.getWidth() > LEVEL_WIDTH))
-    {
-        mPosX -= mVelX;
-    }
 
     //Moves in Y axis
     mPosY += mVelY;
@@ -84,13 +81,21 @@ void Player::move(std::vector<SDL_Rect> objects)
     {
         if(isCollidingWith(o))
         {
+            mJumping = false; //Identify when the player touches the ground to clean it
             mPosY -= mVelY;
             mVelY = 0;
         }
     }
-    if(mPosY >= LEVEL_HEIGHT - sprite.getHeight())
+
+    //Limits of the map
+    if(mPosX < 0 || (mPosX + idle.getWidth() > LEVEL_WIDTH))
     {
-        mPosY = LEVEL_HEIGHT - sprite.getHeight();
+        mPosX -= mVelX;
+    }
+    if(mPosY >= LEVEL_HEIGHT - idle.getHeight())
+    {
+        mPosY = LEVEL_HEIGHT - idle.getHeight();
+        mJumping = false;
         mVelY = 0;
     }
 
@@ -107,40 +112,33 @@ void Player::setPos(int x, int y)
     mPosY = y;
 }
 
-void Player::render(SDL_Renderer* renderer, SDL_Rect camera)
+void Player::render(SDL_Rect camera)
 {
     //Blink
-
-    sprite.setColor(sprite.mTimer.getTicks() / 4, sprite.mTimer.getTicks() / 4, sprite.mTimer.getTicks() / 4);
+    idle.setColor(idle.mTimer.getTicks() / 4, idle.mTimer.getTicks() / 4, idle.mTimer.getTicks() / 4);
 
     if(mJumping)
     {
-        //When the next counter++ == the max counter number
-        if(jump.mCounter + 1 == jump.getAnimationSpeed() * jump.getFrames())
-            mJumping = false;
-
-        jump.render(renderer, mPosX, mPosY, jump.mCounter / jump.getAnimationSpeed(), camera, 1);
+        jump.render(mPosX, mPosY, camera);
     }
     else
     {
-        sprite.render(renderer, mPosX, mPosY, sprite.mCounter / sprite.getAnimationSpeed(), camera, 1);
+        idle.render(mPosX, mPosY, camera);
     }
 }
 
-//Return true if the instance is colliding with the parameter object
+//Return true if the instance is colliding with the object
 bool Player::isCollidingWith(SDL_Rect& object)
 {
-    //return SDL_IntersectRect(&object, &mCollider, NULL);
-
     int aX1, aX2;
     int aY1, aY2;
     int bX1, bX2;
     int bY1, bY2;
 
     aX1 = mPosX;
-    aX2 = mPosX + sprite.getWidth();
+    aX2 = mPosX + idle.getWidth();
     aY1 = mPosY;
-    aY2 = mPosY + sprite.getHeight();
+    aY2 = mPosY + idle.getHeight();
 
     bX1 = object.x;
     bX2 = object.x + object.w;
@@ -158,11 +156,11 @@ bool Player::isCollidingWith(SDL_Rect& object)
         //Overlaping on y axis
         if(aY1 <= bY2 && bY1 <= aY2)
         {
+            //If overlaping on both axis, a colision happened
             return true;
         }
     }
     
-    //If overlaping on both axis, a colision happened
     return false;
 }
 
@@ -174,4 +172,36 @@ int Player::getPosX()
 int Player::getPosY()
 {
     return mPosY;
+}
+
+void Player::moveLeft()
+{
+    idle.setFlipMode(SDL_FLIP_HORIZONTAL);
+    jump.setFlipMode(SDL_FLIP_HORIZONTAL);
+    mDirX = -1;
+    mVelX = -mAcelX;
+}
+
+void Player::moveRight()
+{
+    idle.setFlipMode(SDL_FLIP_NONE);
+    jump.setFlipMode(SDL_FLIP_NONE);
+    mDirX = 1;
+    mVelX = mAcelX;
+}
+
+void Player::stopMove()
+{
+    //Stays in the current flip mode
+    mDirX = 0;
+    mVelX = 0;
+}
+
+void Player::startJump()
+{
+    if(!mJumping)
+    {
+        mJumping = true;
+        mVelY = mAcelY;
+    }
 }

@@ -1,23 +1,36 @@
 #pragma once
 
 #include <SDL.h>
-#include "texture.h"
+#include "animation.hpp"
+#include "helper.hpp"
+#include <cmath>
 
 class Player
 {
     public:
 		Player();
 
+		//Events
 		void handleEvent(SDL_Event& event);
 		void move(std::vector<SDL_Rect> objects);
-		void render(SDL_Renderer* renderer, SDL_Rect camera);
+		void render(SDL_Rect camera);
+
+		//Positional
         void setPos(int x, int y);
 		int getPosX();
 		int getPosY();
 		bool isCollidingWith(SDL_Rect& object);
 
-        Texture sprite;
-		Texture jump;
+		//Movement
+		void moveLeft();
+		void moveRight();
+		void stopMove();
+		void startJump();
+		void stopJump();
+
+		//Action animations
+        Animation idle;
+		Animation jump;
 
 	private:
 		int mAcelX, mAcelY;
@@ -26,4 +39,5 @@ class Player
 		int mVelX, mVelY;
 
 		bool mJumping;
+		bool mFalling;
 };

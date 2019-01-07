@@ -1,22 +1,13 @@
-#include <iostream>
-#include <string>
-#include <SDL.h>
-#include <SDL_image.h>
-#include "texture.h"
-#include "timer.h"
+#include "texture.hpp"
 
 Texture::Texture()
 {
-	mFrames = 0;
 	mTexture = NULL;
 	mWidth = 0;
 	mHeight = 0;
-	mCounter = 0;
-	mAnimationSpeedVSync = 0;
 	mAngle = 0;
 	mCenter = NULL;
 	mFlipMode = SDL_FLIP_NONE;
-	mTimer.stop();
 }
 
 Texture::~Texture()
@@ -24,7 +15,7 @@ Texture::~Texture()
 	free();
 }
 
-bool Texture::loadFromFile(SDL_Renderer* renderer, std::string path, int frames, int animationSpeedVSync)
+bool Texture::loadFromFile(SDL_Renderer* renderer, std::string path)
 {
 	//Get rid of preexisting texture
 	free();
@@ -35,28 +26,19 @@ bool Texture::loadFromFile(SDL_Renderer* renderer, std::string path, int frames,
 	//Load image at specified path
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
 
+	mWidth = loadedSurface->w;
+	mHeight = loadedSurface->h;
+
     //Color key image
     SDL_SetColorKey(loadedSurface, SDL_TRUE, SDL_MapRGB(loadedSurface->format, 255, 0, 255));
 
     //Create texture from surface pixels
     newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
 
-    //Get image dimensions
-    mWidth = loadedSurface->w / frames;
-    mHeight = loadedSurface->h;
-
     //Get rid of old loaded surface
     SDL_FreeSurface(loadedSurface);
 
-	mFrames = frames;
-	mAnimationSpeedVSync = animationSpeedVSync;
-
-
-	int fW = mWidth;
-	for(int i = 1; i <= mFrames; i++) 
-	{
-		mSpriteClips.push_back({i * fW - fW, 0 ,fW , mHeight});
-	}
+	mRenderer = renderer;
 
 	//Return success
 	mTexture = newTexture;
@@ -72,32 +54,19 @@ void Texture::free()
 		mTexture = NULL;
 		mWidth = 0;
 		mHeight = 0;
-		mFrames = 0;
-		mCounter = 0;
-		mAnimationSpeedVSync = 0;
-		mSpriteClips.clear();
 		mAngle = 0;
 		mCenter = NULL;
 		mFlipMode = SDL_FLIP_NONE;
-		mTimer.stop();
 	}
 }
 
-void Texture::render(SDL_Renderer* renderer, int x, int y, int frame, SDL_Rect camera, double scale)
+void Texture::render(int x, int y, SDL_Rect clip, SDL_Rect camera, double scale)
 {
 	//Set rendering space and render to screen
-	SDL_Rect space = {x - camera.x, y - camera.y, scale*mWidth, scale*mHeight};
-	SDL_Rect clip = mSpriteClips[frame];
-	//Renderer, the texture itself, the portion of the image to render, the position on the screen, angle/center/flip.
-	SDL_RenderCopyEx(renderer, mTexture, &mSpriteClips[frame], &space, mAngle, mCenter, mFlipMode);
+	SDL_Rect space = {x - camera.x, y - camera.y, scale*clip.w, scale*clip.h};
 
-	//Each time it renders, it calculates via animation speed what frame will be the next
-	if(mAnimationSpeedVSync != 0)
-	{
-		mCounter++;
-    	if(mCounter / mAnimationSpeedVSync >= mFrames)
-        	mCounter = 0;
-	}
+	//Renderer, the texture itself, the portion of the image to render, the position on the screen, angle/center/flip.
+	SDL_RenderCopyEx(mRenderer, mTexture, &clip, &space, mAngle, mCenter, mFlipMode);
 }
 
 void Texture::setColor(Uint8 red, Uint8 green, Uint8 blue)
@@ -113,31 +82,6 @@ int Texture::getWidth()
 int Texture::getHeight()
 {
 	return mHeight;
-}
-
-int Texture::getFrames()
-{
-	return mFrames;
-}
-
-int Texture::getAnimationSpeed()
-{
-	return mAnimationSpeedVSync;
-}
-
-double Texture::getRotationAngle()
-{
-	return mAngle;
-}
-
-SDL_Point* Texture::getCenter()
-{
-	return mCenter;
-}
-
-SDL_RendererFlip Texture::getFlipMode()
-{
-	return mFlipMode;
 }
 
 void Texture::setRotationAngle(double angle)
