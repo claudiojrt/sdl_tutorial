@@ -21,7 +21,7 @@ class Texture
 		void free();
 
 		//Renders texture at given point
-		void render(SDL_Renderer* renderer, int x, int y, int frame);
+		void render(SDL_Renderer* renderer, int x, int y, int frame, SDL_Rect camera);
 
 		//Set color modulation
         void setColor(Uint8 red, Uint8 green, Uint8 blue);
@@ -38,14 +38,12 @@ class Texture
 		void setCenter(SDL_Point* center);
 		void setFlipMode(SDL_RendererFlip mode);
 
-		//Counter for the animations, public because yes
+		//Frame rendering counter, for the animations. Time of a sprite being rendered = counter(frames) / animation speed
 		int mCounter;
 
 		//Movement information
-		int mXVel;
-		int mYVel;
-		int mXDir;
-		int mYDir;
+		int mDirX;
+		int mDirY;
 
 		Timer mTimer;
 

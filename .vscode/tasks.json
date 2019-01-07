@@ -12,6 +12,7 @@
                 "${file}",
                 "code/texture.cpp",
                 "code/timer.cpp",
+                "code/player.cpp",
                 "-IC:\\SDL\\include\\SDL2",
                 "-I${workspaceFolder}\\code",
                 "-LC:\\SDL\\lib",

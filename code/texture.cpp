@@ -42,7 +42,7 @@ bool Texture::loadFromFile(SDL_Renderer* renderer, std::string path, int frames,
     newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
 
     //Get image dimensions
-    mWidth = loadedSurface->w;
+    mWidth = loadedSurface->w / frames;
     mHeight = loadedSurface->h;
 
     //Get rid of old loaded surface
@@ -52,7 +52,7 @@ bool Texture::loadFromFile(SDL_Renderer* renderer, std::string path, int frames,
 	mAnimationSpeedVSync = animationSpeedVSync;
 
 
-	int fW = mWidth / mFrames;
+	int fW = mWidth;
 	for(int i = 1; i <= mFrames; i++) 
 	{
 		mSpriteClips.push_back({i * fW - fW, 0 ,fW , mHeight});
@@ -82,12 +82,20 @@ void Texture::free()
 	}
 }
 
-void Texture::render(SDL_Renderer* renderer, int x, int y, int frame)
+void Texture::render(SDL_Renderer* renderer, int x, int y, int frame, SDL_Rect camera)
 {
 	//Set rendering space and render to screen
-	SDL_Rect space = {x, y, mWidth/mFrames, mHeight};
+	SDL_Rect space = {x - camera.x, y - camera.y, mWidth, mHeight};
 	SDL_Rect clip = mSpriteClips[frame];
 	SDL_RenderCopyEx(renderer, mTexture, &mSpriteClips[frame], &space, mAngle, mCenter, mFlipMode);
+
+	//Go to the next frame
+	if(mAnimationSpeedVSync != 0)
+	{
+		mCounter++;
+    	if(mCounter / mAnimationSpeedVSync >= mFrames)
+        	mCounter = 0;
+	}
 }
 
 void Texture::setColor(Uint8 red, Uint8 green, Uint8 blue)
