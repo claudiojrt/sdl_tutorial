@@ -4,6 +4,7 @@
 #include <SDL_image.h>
 #include <texture.h>
 #include <cmath>
+#include <sstream>
 
 //Function definitions
 void Init();
@@ -99,7 +100,10 @@ int main(int argc, char *argv[])
 
         //Render everything
         clob.setColor(r,g,b);
-        clob.render(gRenderer, 350, 408, clob.mCounter / clob.getAnimationSpeed());
+
+        if((SDL_GetTicks()/1000) % 2 == 0)
+            clob.render(gRenderer, 350, 408, clob.mCounter / clob.getAnimationSpeed());
+
         for (int i = 1; i < 8; i++) {
             stonebrick.render(gRenderer, i * stonebrick.getWidth() - stonebrick.getWidth(), SCREEN_HEIGHT - stonebrick.getHeight(), 0);
         }
