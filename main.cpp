@@ -4,7 +4,6 @@
 #include <SDL_image.h>
 #include <texture.h>
 #include <cmath>
-#include <sstream>
 
 //Function definitions
 void Init();
@@ -22,6 +21,7 @@ SDL_Haptic* gJoystickHaptic = NULL;
 
 SDL_Event e;
 bool quit = false;
+bool pToggle = false;
 
 Uint8 r = 255;
 Uint8 g = 255;
@@ -34,6 +34,8 @@ int main(int argc, char *argv[])
     Texture clob;
     Texture stonebrick;
     clob.loadFromFile(gRenderer, "res/Clob_spritesheet.png", 4, 10);
+    clob.mTimer.start();
+
     stonebrick.loadFromFile(gRenderer, "res/stone_brick.png", 1, 0);
 
     while(!quit)
@@ -81,12 +83,27 @@ int main(int argc, char *argv[])
             }
         }
 
-        /* const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
-        if(currentKeyStates[SDL_SCANCODE_A])
-            clob.setFlipMode(SDL_FLIP_HORIZONTAL);
+        const Uint8* currentKeyStates = SDL_GetKeyboardState( NULL );
+        if(currentKeyStates[SDL_SCANCODE_P] && !pToggle)
+        {
+            pToggle = true;
+            if(clob.mTimer.isPaused())
+            {
+                clob.mTimer.start();
+            }
+            else
+            {
+                clob.mTimer.pause();
+            }
+        }
+        else if (!currentKeyStates[SDL_SCANCODE_P])
+        {
+            pToggle = false;
+        }
 
-        if(currentKeyStates[SDL_SCANCODE_D])
+        /* if(currentKeyStates[SDL_SCANCODE_D])
             clob.setFlipMode(SDL_FLIP_NONE);
+            clob.setFlipMode(SDL_FLIP_HORIZONTAL);
 
         if(currentKeyStates[SDL_SCANCODE_Q])
            clob.setRotationAngle(clob.getRotationAngle() - 30);
@@ -101,8 +118,10 @@ int main(int argc, char *argv[])
         //Render everything
         clob.setColor(r,g,b);
 
-        if((SDL_GetTicks()/1000) % 2 == 0)
-            clob.render(gRenderer, 350, 408, clob.mCounter / clob.getAnimationSpeed());
+        if(clob.mTimer.isRunning())
+            clob.setColor(clob.mTimer.getTicks() / 5, clob.mTimer.getTicks() / 5, clob.mTimer.getTicks() / 5);
+            
+        clob.render(gRenderer, 350, 408, clob.mCounter / clob.getAnimationSpeed());
 
         for (int i = 1; i < 8; i++) {
             stonebrick.render(gRenderer, i * stonebrick.getWidth() - stonebrick.getWidth(), SCREEN_HEIGHT - stonebrick.getHeight(), 0);

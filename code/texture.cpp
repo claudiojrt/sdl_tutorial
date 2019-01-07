@@ -3,6 +3,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "texture.h"
+#include "timer.h"
 
 Texture::Texture()
 {
@@ -15,6 +16,7 @@ Texture::Texture()
 	mAngle = 0;
 	mCenter = NULL;
 	mFlipMode = SDL_FLIP_NONE;
+	mTimer.stop();
 }
 
 Texture::~Texture()
@@ -76,6 +78,7 @@ void Texture::free()
 		mAngle = 0;
 		mCenter = NULL;
 		mFlipMode = SDL_FLIP_NONE;
+		mTimer.stop();
 	}
 }
 

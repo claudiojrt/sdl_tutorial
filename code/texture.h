@@ -3,6 +3,7 @@
 #include <string>
 #include <SDL.h>
 #include <vector>
+#include "timer.h"
 
 class Texture
 {
@@ -45,6 +46,8 @@ class Texture
 		int mYVel;
 		int mXDir;
 		int mYDir;
+
+		Timer mTimer;
 
 	private:
 

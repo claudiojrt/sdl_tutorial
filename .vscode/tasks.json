@@ -11,6 +11,7 @@
                 "-g",
                 "${file}",
                 "code/texture.cpp",
+                "code/timer.cpp",
                 "-IC:\\SDL\\include\\SDL2",
                 "-I${workspaceFolder}\\code",
                 "-LC:\\SDL\\lib",
@@ -20,6 +21,7 @@
                 "-lSDL2main",
                 "-lSDL2",
                 "-lSDL2_image",
+                "-lSDL2_ttf",
                 "-o",
                 "${fileBasenameNoExtension}.exe"
             ],
