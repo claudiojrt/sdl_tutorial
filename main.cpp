@@ -22,8 +22,10 @@ int main(int argc, char *argv[])
 {
     Init();
 
-    Texture texture;
-    texture.loadFromFile(gRenderer, "res/Clob.png");
+    Texture clob;
+    Texture stonebrick;
+    clob.loadFromFile(gRenderer, "res/Clob_spritesheet.png", 4);
+    stonebrick.loadFromFile(gRenderer, "res/stone_brick.png", 1);
 
     while(!quit)
     {
@@ -37,10 +39,24 @@ int main(int argc, char *argv[])
 
         //Clear the back buffer
         SDL_RenderClear(gRenderer);
-        SDL_SetRenderDrawColor(gRenderer, 255, 255, 255, 255);
+        SDL_SetRenderDrawColor(gRenderer, 0, 0, 255, 255);
 
         //Render everything
-        texture.render(gRenderer, 400, 300);
+        clob.render(gRenderer, 350, 408, clob.mCounter);
+        for (int i = 1; i < 8; i++) {
+            stonebrick.render(gRenderer, i * stonebrick.getWidth() - stonebrick.getWidth(), SCREEN_HEIGHT - stonebrick.getHeight(), 0);
+        }
+
+        clob.mCounter++;
+        if(clob.mCounter == 4)
+            clob.mCounter = 0;
+
+        if(clob.mCounter % 2 == 0){
+            SDL_Delay(300);
+        }
+        else{
+            SDL_Delay(100);
+        }
 
         //Bring back buffer to front
         SDL_RenderPresent(gRenderer);

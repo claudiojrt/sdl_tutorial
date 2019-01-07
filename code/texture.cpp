@@ -6,9 +6,11 @@
 
 Texture::Texture()
 {
+	mFrames = 0;
 	mTexture = NULL;
 	mWidth = 0;
 	mHeight = 0;
+	mCounter = 0;
 }
 
 Texture::~Texture()
@@ -16,7 +18,7 @@ Texture::~Texture()
 	free();
 }
 
-bool Texture::loadFromFile(SDL_Renderer* renderer, std::string path)
+bool Texture::loadFromFile(SDL_Renderer* renderer, std::string path, int frames)
 {
 	//Get rid of preexisting texture
 	free();
@@ -40,6 +42,13 @@ bool Texture::loadFromFile(SDL_Renderer* renderer, std::string path)
     //Get rid of old loaded surface
     SDL_FreeSurface(loadedSurface);
 
+	mFrames = frames;
+	int fW = mWidth / mFrames;
+	for(int i = 1; i <= mFrames; i++) 
+	{
+		mSpriteClips.push_back({i * fW - fW, 0 ,fW , mHeight});
+	}
+
 	//Return success
 	mTexture = newTexture;
 	return mTexture != NULL;
@@ -54,14 +63,17 @@ void Texture::free()
 		mTexture = NULL;
 		mWidth = 0;
 		mHeight = 0;
+		mFrames = 0;
+		mCounter = 0;
 	}
 }
 
-void Texture::render(SDL_Renderer* renderer, int x, int y)
+void Texture::render(SDL_Renderer* renderer, int x, int y, int frame)
 {
 	//Set rendering space and render to screen
-	SDL_Rect space = {x, y, mWidth, mHeight};
-	SDL_RenderCopy(renderer, mTexture, NULL, &space);
+	SDL_Rect space = {x, y, mWidth/mFrames, mHeight};
+	SDL_Rect clip = mSpriteClips[frame];
+	SDL_RenderCopy(renderer, mTexture, &mSpriteClips[frame], &space);
 }
 
 int Texture::getWidth()
