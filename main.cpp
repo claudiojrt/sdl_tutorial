@@ -1,72 +1,66 @@
-#include <iostream>
-#include <string>
 #include <SDL.h>
 #include <SDL_image.h>
+#include <iostream>
+#include <string>
 
-int gScreenWidth = 800;
-int gScreenHeight = 600;
+SDL_Texture* loadTexture(std::string path);
 
 SDL_Window* gWindow = NULL;
-SDL_Surface* gSurface = NULL;
+SDL_Renderer* gRenderer = NULL;
+SDL_Texture* gTexture = NULL;
 
-bool gQuit = false;
-
-//Functions
-
-SDL_Surface* loadSurface(std::string path);
-
-int main(int argc, char* args[]) {
+int main(int argc, char *argv[])
+{
 
     SDL_Init(SDL_INIT_VIDEO);
-    gWindow = SDL_CreateWindow("PNG Loader",SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, gScreenWidth, gScreenHeight, SDL_WINDOW_SHOWN);
-    gSurface = SDL_GetWindowSurface(gWindow);
+
+    gWindow = SDL_CreateWindow("Textures", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 800, 600, SDL_WINDOW_SHOWN);
+    gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
+    SDL_SetRenderDrawColor(gRenderer, 255, 0, 100, 255);
+
     IMG_Init(IMG_INIT_PNG);
 
-    SDL_Surface* pngImage = NULL;
-    pngImage = loadSurface("loaded.png");
-    if (pngImage == NULL){
-        std::cout << "Error";
-    }
-
+    bool quit = false;
     SDL_Event e;
 
-    while(!gQuit) {
+    gTexture = loadTexture("texture.png");
+
+    while(!quit)
+    {
         while( SDL_PollEvent( &e ) != 0 )
         {
             //User requests quit
             if( e.type == SDL_QUIT )
             {
-                gQuit = true;
+                quit = true;
             }
         }
 
-        SDL_BlitScaled(pngImage, NULL, gSurface, NULL);
-        SDL_UpdateWindowSurface(gWindow);
+        SDL_RenderClear(gRenderer);
+        SDL_RenderCopy(gRenderer, gTexture, NULL, NULL);
+        SDL_RenderPresent(gRenderer);
+
     }
 
-    //Free loaded image
-	SDL_FreeSurface(pngImage);
-	pngImage = NULL;
+    SDL_DestroyTexture(gTexture);
+    gTexture = NULL;
 
-	//Destroy window
-	SDL_DestroyWindow(gWindow);
-	gWindow = NULL;
-    gSurface = NULL;
+    SDL_DestroyRenderer(gRenderer);
+    gRenderer = NULL;
 
-	//Quit SDL subsystems
-	IMG_Quit();
-	SDL_Quit();
+    SDL_DestroyWindow(gWindow);
+    gWindow = NULL;
 
+    IMG_Quit();
+    SDL_Quit();
     return 0;
 }
 
-SDL_Surface* loadSurface(std::string path) {
+SDL_Texture* loadTexture(std::string path) {
 
-    SDL_Surface* optimizedSurface = NULL;
-    SDL_Surface* loadedSurface = IMG_Load(path.c_str());
+    SDL_Surface* image = IMG_Load(path.c_str());
+    SDL_SetColorKey(image, SDL_TRUE, SDL_MapRGB(image->format, 255, 255, 255));
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(gRenderer, image);
 
-    optimizedSurface = SDL_ConvertSurface(loadedSurface, gSurface->format, NULL);
-    SDL_FreeSurface(loadedSurface);
-
-    return optimizedSurface;
+    return  texture;
 }
