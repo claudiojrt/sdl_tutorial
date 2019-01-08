@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SDL.h>
-#include "texture.hpp"
+#include "../include/texture.hpp"
 #include <string>
 #include <vector>
 

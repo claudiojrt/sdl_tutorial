@@ -28,12 +28,12 @@ int main(int argc, char *argv[])
     Init();
 
     player1.setPos(350, 100);
-    player1.idle.loadFromFile(gRenderer, "res/Clob_spritesheet.png", 4, 10);
+    player1.idle.loadFromFile(gRenderer, "assets/spritesheets/Clob_spritesheet.png", 4, 10);
     player1.idle.mTimer.start();
-    player1.jump.loadFromFile(gRenderer, "res/Clob_jump.png", 4, 5);
+    player1.jump.loadFromFile(gRenderer, "assets/spritesheets/Clob_jump.png", 4, 5);
 
     Level level1(1);
-    level1.loadTileset(gRenderer, "res/spritesheet.png", 5, 1);
+    level1.loadTileset(gRenderer, "assets\tilesets\mainTileset.png", 5, 1);
     gObjects = level1.getColliders();
 
     while(!gQuit)

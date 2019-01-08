@@ -1,8 +1,8 @@
 #pragma once
 
 #include <SDL.h>
-#include "animation.hpp"
-#include "helper.hpp"
+#include "../include/animation.hpp"
+#include "../include/helper.hpp"
 #include <cmath>
 
 class Player

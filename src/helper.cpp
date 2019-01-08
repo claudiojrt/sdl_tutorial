@@ -1,4 +1,4 @@
-#include "helper.hpp"
+#include "../include/helper.hpp"
 
 extern int LEVEL_WIDTH = 2000;
 extern int LEVEL_HEIGHT = 600;

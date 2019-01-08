@@ -1,4 +1,4 @@
-#include "tile.hpp"
+#include "../include/tile.hpp"
 
 Tile::Tile(int index, SDL_Rect position, bool collides)
 {
