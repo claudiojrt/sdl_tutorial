@@ -1,13 +1,15 @@
+- Makefile
+
+- Resource manager
+
 - Separar collider e x/y do player/sprites
 
 - Identificar quando player encostou no chão pra limpar "jumping" flag (atualmente se colide em Y, deixa dar 
 pulo duplo)
 
-- Limpar includes
-
 - Ver forma de separar "is jumping" de permitir um segundo pulo, com "is jumping" de ficar repetindo animação
 
-- Transformar leitura de mapas em leitura por arquivo
+- Transformar leitura de mapas em leitura por arquivo (Tiled files)
 
 - Otimizar detecção de colisões via identificando primeiro se o colisor está na tela. Será que é uma otimização mesmo?
 
@@ -16,3 +18,5 @@ bordas do objeto)
 
 - Pensar forma de dar loop em determinadas partes da animação, como "enquanto mVelY > 0, anima só os frames 2-3"
 (subindo) e "enquanto mVelY < 0 anima só os frames de queda".
+
+- Possibilitar mais colisor shapes
