@@ -1,4 +1,4 @@
-#include "../include/tileset.hpp"
+#include <tileset.hpp>
 
 Tileset::Tileset()
 {

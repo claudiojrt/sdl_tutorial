@@ -1,4 +1,4 @@
-#include "../include/animation.hpp"
+#include <animation.hpp>
 
 void Animation::loadFromFile(SDL_Renderer* renderer, std::string path, int frames, int animationSpeedVSync)
 {

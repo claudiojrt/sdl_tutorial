@@ -9,7 +9,7 @@
             "command": "g++",
             "args": [
                 "-g",
-                "main.cpp",
+                "src\\main.cpp",
                 "src\\helper.cpp",
                 "src\\texture.cpp",
                 "src\\timer.cpp",
@@ -29,7 +29,7 @@
                 "-lSDL2_image",
                 "-lSDL2_ttf",
                 "-o",
-                "main.exe"
+                "build\\main.exe"
             ],
             "group": {
                 "kind": "build",

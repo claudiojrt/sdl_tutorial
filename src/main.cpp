@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
     player1.jump.loadFromFile(gRenderer, "assets/spritesheets/Clob_jump.png", 4, 5);
 
     Level level1(1);
-    level1.loadTileset(gRenderer, "assets\tilesets\mainTileset.png", 5, 1);
+    level1.loadTileset(gRenderer, "assets/tilesets/mainTileset.png", 5, 1);
     gObjects = level1.getColliders();
 
     while(!gQuit)

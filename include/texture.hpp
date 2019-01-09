@@ -2,7 +2,7 @@
 
 #include <SDL.h>
 #include <SDL_image.h>
-#include "../include/timer.hpp"
+#include <timer.hpp>
 #include <iostream>
 #include <string>
 #include <vector>

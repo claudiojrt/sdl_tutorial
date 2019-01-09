@@ -1,9 +1,9 @@
 #pragma once
 
 #include <SDL.h>
-#include "../include/tileset.hpp"
-#include "../include/tile.hpp"
-#include "../include/helper.hpp"
+#include <tileset.hpp>
+#include <tile.hpp>
+#include <helper.hpp>
 #include <string>
 #include <vector>
 #include <fstream>

@@ -1,4 +1,4 @@
-#include "../include/level.hpp"
+#include <level.hpp>
 
 Level::Level(int levelNum)
 {
